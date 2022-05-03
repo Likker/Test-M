@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
+	public int              m_EnemiesToPop;
 	public List<GameObject> m_Enemies;
 	public Rect             m_Rect;
 
-	public int m_EnemiesToPop;
-	
 	private void Awake()
 	{
 		for (int i = 0; i < m_EnemiesToPop; i++)

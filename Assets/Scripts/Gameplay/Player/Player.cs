@@ -12,11 +12,8 @@ public enum EPlayerState
 
 public class Player : SingletonMB<Player>
 {
-   private       float m_RadiusCollision;
-   private const float c_OffsetRadius = 2.0f;
-
-   public EPlayerState m_PlayerState { get; set; }
-
+   public  EPlayerState m_PlayerState { get; set; }
+   
    public Action OnStartAttack;
    public Action OnStopAttack;
    
@@ -31,6 +28,7 @@ public class Player : SingletonMB<Player>
    private List<MappedObject> m_SearchBuffer;
    private Vector3            m_DirectionNorm;
    private Coroutine          m_AttackCo;
+   private float              m_RadiusCollision;
    
    private void Awake()
    {
@@ -47,6 +45,7 @@ public class Player : SingletonMB<Player>
 
    private void OnDestroy()
    {
+      m_PlayerController.OnStartMove -= OnStartMove;
       m_PlayerEquiment.OnEquipWeapon -= OnEquipWeapon;
    }
    
@@ -68,7 +67,13 @@ public class Player : SingletonMB<Player>
    {
       if (m_AttackCo != null)
          StopCoroutine(m_AttackCo);
-      m_PlayerState = EPlayerState.NONE;
+
+      if (m_PlayerState == EPlayerState.ATTACK)
+      {
+         if (m_AttackCo != null)
+            StopCoroutine(m_AttackCo);
+         m_PlayerState = EPlayerState.NONE;
+      }
    }
 
    private void Attack(Enemy _Enemy)
@@ -80,13 +85,10 @@ public class Player : SingletonMB<Player>
       if (m_AttackCo != null)
          StopCoroutine(m_AttackCo);
       
-      m_AttackCo = StartCoroutine(AttackCoroutine(_Enemy, () =>
-      {
-         m_PlayerState = EPlayerState.NONE;
-         OnStopAttack.Invoke();
-      }));
+      m_AttackCo = StartCoroutine(AttackCoroutine(_Enemy));
    }
-
+   
+   
    private void Update()
    {
 
@@ -106,8 +108,10 @@ public class Player : SingletonMB<Player>
             break;
          }
          case EPlayerState.ATTACK:
-            transform.forward = Vector3.Lerp(transform.forward, m_TargetEnemy.transform.position - m_PlayerController.GetPosition(),
-                                             Time.deltaTime * 8.0f);
+            if (m_TargetEnemy != null)
+               transform.forward = Vector3.Lerp(transform.forward, 
+                                                m_TargetEnemy.transform.position - m_PlayerController.GetPosition(),
+                                                Time.deltaTime * 8.0f);
             break;
       }
    }
@@ -134,14 +138,20 @@ public class Player : SingletonMB<Player>
    {
       return m_RadiusCollision;
    }
-
-   private IEnumerator AttackCoroutine(Enemy _Enemy, Action _Callback)
+   
+   public void OnEndStrike()
+   {
+      if (m_AttackCo != null)
+         StopCoroutine(m_AttackCo);
+      m_PlayerState = EPlayerState.NONE;
+   }
+   
+   private IEnumerator AttackCoroutine(Enemy _Enemy)
    {
       transform.forward = Vector3.Lerp(transform.forward, _Enemy.transform.position - m_PlayerController.GetPosition(),
                                        Time.deltaTime * 8.0f);
       yield return new WaitForSeconds(m_PlayerEquiment.GetDamageAnimationTiming());
       _Enemy.Hit(1);
-      _Callback?.Invoke();
    }
 
    private void OnDrawGizmos()

@@ -16,11 +16,8 @@ public class EnemyManager : SingletonMB<EnemyManager>
 	{
 		m_Enemies ??= new List<Enemy>();
 		m_Enemies.Remove(_Enemy);
-	}
-	
-	public bool IsEnemyAvailable()
-	{
-		return m_Enemies.Count > 0;
+		if (m_Enemies.Count == 0)
+			FSMManager.Instance.ChangePhase(GamePhase.SUCCESS);
 	}
 
 	public Enemy GetClosestEnemy(Vector3 _Position)

@@ -6,16 +6,16 @@ using UnityEngine;
 public class Enemy : MappedObject
 {
    public int  m_Life;
-   public bool m_Focusable { get; private set; }
 
    // Cache
    private SphereCollider m_SphereCollider;
+   private BumpEffect     m_BumpEffect;
    
    protected override void Awake()
    {
       base.Awake();
       m_SphereCollider = GetComponent<SphereCollider>();
-      m_Focusable      = true;
+      m_BumpEffect     = GetComponent<BumpEffect>();
    }
 
    private void Start()
@@ -24,15 +24,12 @@ public class Enemy : MappedObject
       RegisterMap(m_SphereCollider.radius);
    }
 
-   public bool Hit(int _Damage)
+   public void Hit(int _Damage)
    {
+      m_BumpEffect.Play();
       m_Life -= _Damage;
       if (m_Life <= 0)
-      {
          Die();
-         return true;
-      }
-      return false;
    }
 
    private void Die()

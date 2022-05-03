@@ -568,6 +568,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2148928661061455951}
   - component: {fileID: 4278100186079492270}
+  - component: {fileID: 976977413486927845}
   m_Layer: 6
   m_Name: Alice
   m_TagString: Untagged
@@ -610,6 +611,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &976977413486927845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3137283685161607772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cab938bcc4808d948b9f679aa0763e54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Player: {fileID: 0}
 --- !u!1 &3206923099687242354
 GameObject:
   m_ObjectHideFlags: 0
