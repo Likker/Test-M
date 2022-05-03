@@ -70,7 +70,6 @@ namespace CustomPackages
 				return false;
 
 			int passCount = GetPassCount(_SqrRadius);
-			Debug.Log("PASS COUNT : " + passCount);
 
 			int XBase = Mathf.RoundToInt(_Position.x / m_TileSize);
 			int ZBase = Mathf.RoundToInt(_Position.z / m_TileSize);

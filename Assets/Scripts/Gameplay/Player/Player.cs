@@ -15,7 +15,10 @@ public class Player : SingletonMB<Player>
    private       float m_RadiusCollision;
    private const float c_OffsetRadius = 2.0f;
 
-   private EPlayerState m_PlayerState;
+   public EPlayerState m_PlayerState { get; set; }
+
+   public Action OnStartAttack;
+   public Action OnStopAttack;
    
    // CACHE
    private PlayerController   m_PlayerController;
@@ -23,10 +26,11 @@ public class Player : SingletonMB<Player>
    private CircleLineRenderer m_CircleRenderer;
    
    // BUFFER
-   private bool             m_IsTargetingEnemy;
-   private Enemy            m_TargetEnemy;
+   private bool               m_IsTargetingEnemy;
+   private Enemy              m_TargetEnemy;
    private List<MappedObject> m_SearchBuffer;
-   private Vector3          m_DirectionNorm;
+   private Vector3            m_DirectionNorm;
+   private Coroutine          m_AttackCo;
    
    private void Awake()
    {
@@ -36,7 +40,8 @@ public class Player : SingletonMB<Player>
       m_SearchBuffer     = new List<MappedObject>();
       m_IsTargetingEnemy = false;
       m_PlayerState      = EPlayerState.NONE;
-      
+
+      m_PlayerController.OnStartMove += OnStartMove;
       m_PlayerEquiment.OnEquipWeapon += OnEquipWeapon;
    }
 
@@ -58,18 +63,33 @@ public class Player : SingletonMB<Player>
          return;
       m_TargetEnemy = EnemyManager.Instance.GetClosestEnemy(transform.position);
    }
-   
+
+   private void OnStartMove()
+   {
+      if (m_AttackCo != null)
+         StopCoroutine(m_AttackCo);
+      m_PlayerState = EPlayerState.NONE;
+   }
+
    private void Attack(Enemy _Enemy)
    {
+      m_TargetEnemy = _Enemy;
+      OnStartAttack?.Invoke();
       m_PlayerState = EPlayerState.ATTACK;
-      StartCoroutine(AttackCoroutine(_Enemy, () =>
+      
+      if (m_AttackCo != null)
+         StopCoroutine(m_AttackCo);
+      
+      m_AttackCo = StartCoroutine(AttackCoroutine(_Enemy, () =>
       {
          m_PlayerState = EPlayerState.NONE;
+         OnStopAttack.Invoke();
       }));
    }
 
    private void Update()
    {
+
       if (m_PlayerController.IsMoving())
          return;
 
@@ -86,6 +106,8 @@ public class Player : SingletonMB<Player>
             break;
          }
          case EPlayerState.ATTACK:
+            transform.forward = Vector3.Lerp(transform.forward, m_TargetEnemy.transform.position - m_PlayerController.GetPosition(),
+                                             Time.deltaTime * 8.0f);
             break;
       }
    }
@@ -115,11 +137,10 @@ public class Player : SingletonMB<Player>
 
    private IEnumerator AttackCoroutine(Enemy _Enemy, Action _Callback)
    {
+      transform.forward = Vector3.Lerp(transform.forward, _Enemy.transform.position - m_PlayerController.GetPosition(),
+                                       Time.deltaTime * 8.0f);
       yield return new WaitForSeconds(m_PlayerEquiment.GetDamageAnimationTiming());
       _Enemy.Hit(1);
-      Debug.Log("HIT");
-      yield return new WaitForSeconds(1.0f / m_PlayerEquiment.GetAttackAnimationSpeed() - m_PlayerEquiment.GetDamageAnimationTiming());
-      Debug.Log("RESET ATTACK");
       _Callback?.Invoke();
    }
 

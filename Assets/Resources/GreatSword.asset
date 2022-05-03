@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GreatSword
   m_EditorClassIdentifier: 
   m_AttackAnimationSpeed: 0.5
-  m_DamageAnimationTiming: 1
+  m_DamageAnimationTiming: 0.75
   m_MovementSpeed: 5
   m_AttackRange: 2
