@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class Player : SingletonMB<Player>
 {
-   [Header("CONFIG")]
-   public  float m_RadiusCollision;
+   private  float m_RadiusCollision;
 
    // CACHE
    private PlayerController m_PlayerController;
+   private PlayerEquiment   m_PlayerEquiment;
    
    // BUFFER
    private bool             m_IsTargetingEnemy;
@@ -20,32 +20,25 @@ public class Player : SingletonMB<Player>
    
    private void Awake()
    {
-      m_PlayerController             =  GetComponent<PlayerController>();
-      m_SearchBuffer                 =  new List<GameObject>();
-      m_IsTargetingEnemy             =  false;
-      
-      m_PlayerController.OnStartMove += OnStartMove;
-      m_PlayerController.OnStopMove  += OnStopMove;
+      m_PlayerController = GetComponent<PlayerController>();
+      m_PlayerEquiment   = GetComponent<PlayerEquiment>();
+      m_SearchBuffer     = new List<GameObject>();
+      m_IsTargetingEnemy = false;
+
+      m_PlayerEquiment.OnEquipWeapon += OnEquipWeapon;
    }
 
    private void OnDestroy()
    {
-      m_PlayerController.OnStartMove -= OnStartMove;
-      m_PlayerController.OnStopMove  -= OnStopMove;
+      m_PlayerEquiment.OnEquipWeapon -= OnEquipWeapon;
    }
-
-   private void OnStartMove()
+   
+   private void OnEquipWeapon()
    {
-      m_IsTargetingEnemy = false;
-      m_TargetEnemy      = null;
+      m_PlayerController.m_Speed = m_PlayerEquiment.GetMovementSpeed();
+      m_RadiusCollision          = m_PlayerEquiment.GetAttackRange();
    }
-
-   private void OnStopMove()
-   {
-      m_IsTargetingEnemy = true;
-      SearchEnemy();
-   }
-
+   
    public void SearchEnemy()
    {
       if (m_IsTargetingEnemy == false)
@@ -63,17 +56,6 @@ public class Player : SingletonMB<Player>
       MappingManager.Instance.FindEntities(m_PlayerController.GetPosition(), m_RadiusCollision * m_RadiusCollision, ref m_SearchBuffer);
       if (m_SearchBuffer.Count > 0)
          Attack();
-   }
-   
-   private void FixedUpdate()
-   {
-      if (!m_IsTargetingEnemy)
-         return;
-      
-      m_DirectionNorm   = (m_TargetEnemy.transform.position - m_PlayerController.GetPosition()).normalized;
-      m_DirectionNorm.y = 0.0f;
-
-      m_PlayerController.Move(m_DirectionNorm);
    }
 
    private void OnDrawGizmos()
