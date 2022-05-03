@@ -70,23 +70,19 @@ public class Player : SingletonMB<Player>
 
    private void Update()
    {
-      if (!MappingManager.Instance.IsEntityPresent(m_PlayerController.GetPosition(), GetRadiusDetection()))
+      if (m_PlayerController.IsMoving())
          return;
-      
-      Debug.Log("ON ENTER");
-            
-      MappingManager.Instance.FindEntities(m_PlayerController.GetPosition(), GetRadiusDetection(), ref m_SearchBuffer);
-      if (m_SearchBuffer.Count > 0)
-      {
 
-         //Attack(GetClosestEnemy());
-      }
-      
       switch (m_PlayerState)
       {
          case EPlayerState.NONE:
          {
-           
+            if (!MappingManager.Instance.IsEntityPresent(m_PlayerController.GetPosition(), GetRadiusDetection()))
+               return;
+
+            MappingManager.Instance.FindEntities(m_PlayerController.GetPosition(), GetRadiusDetection(), ref m_SearchBuffer);
+            if (m_SearchBuffer.Count > 0)
+               Attack(GetClosestEnemy());
             break;
          }
          case EPlayerState.ATTACK:
