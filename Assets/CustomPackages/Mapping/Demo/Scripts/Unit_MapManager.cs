@@ -4,7 +4,7 @@
 	{
 		private void Start()
 		{
-			RegisterMap();
+			RegisterMap(1.0f);
 		}
 
 		private void Update()

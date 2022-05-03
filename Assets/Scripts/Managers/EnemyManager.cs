@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class EnemyManager : SingletonMB<EnemyManager>
 {
-	private List<Enemy> m_Enemies;
-	
+	private List<Enemy>    m_Enemies;
+
 	public void Register(Enemy _Enemy)
 	{
-		m_Enemies ??= new List<Enemy>();
+		m_Enemies        ??= new List<Enemy>();
 		m_Enemies.Add(_Enemy);
 	}
 

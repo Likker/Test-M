@@ -5,284 +5,285 @@ using System.Collections.Generic;
 
 namespace CustomPackages
 {
-	public class MappingManager : SingletonMB<MappingManager>
-	{
-		private const int c_MapComputationFactor = 10000;
+	 public class MappingManager : SingletonMB<MappingManager>
+    {
+        private const int c_MapComputationFactor = 10000;
 
-		public float m_TileSize        = 5f;
-		public float m_RadiusDetection = 1.0f;
-		
-		public Action<GameObject> OnEnter;
-		public Action<GameObject> OnExit;
-		
-		private List<GameObject> m_Entities;
-		private Hashtable m_Datas;
-		private bool m_IsInitialized = false;
-		private float m_SqrTileFactor;
+        [SerializeField] private float m_TileSize = 5f;
+        [SerializeField] private float m_RadiusDetection = 1.0f;
 
-		private List<GameObject> m_SearchBuffer;
-		private List<GameObject> m_PrevBuffer;
-		private List<GameObject> m_TMPBuffer;
-		
-		#region Exposed
+        public Action<GameObject> OnEnter;
+        public Action<GameObject> OnExit;
 
-		private void Awake()
-		{
-			m_SearchBuffer = new List<GameObject>();
-			m_PrevBuffer   = new List<GameObject>();
-			m_TMPBuffer    = new List<GameObject>();
-		}
-		
-		public int RegisterEntity(GameObject _Entity, Vector3 _Position, out int _FirstKey)
-		{
-			if (!m_IsInitialized)
-				Init();
+        private List<MappedObject> m_Entities;
+        private Dictionary<int, List<int>> m_Datas;
+        private bool m_IsInitialized = false;
+        private float m_SqrTileFactor;
 
-			_FirstKey = InitEntity(_Position, _Entity);
+        private List<MappedObject> m_SearchBuffer;
+        private List<MappedObject> m_PrevBuffer;
+        private List<MappedObject> m_TMPBuffer;
 
-			return m_Entities.Count - 1;
-		}
+        #region Exposed
 
-		public void UnregisterEntity(int _LastKey, int _EntityIndex)
-		{
-			RemoveOldKey(_LastKey, _EntityIndex);
-			m_Entities[_EntityIndex] = null;
-		}
+        private void Awake()
+        {
+            m_SearchBuffer = new List<MappedObject>();
+            m_PrevBuffer = new List<MappedObject>();
+            m_TMPBuffer = new List<MappedObject>();
+        }
 
-		private int InitEntity(Vector3 _Position, GameObject _Entity)
-		{
-			m_Entities.Add(_Entity);
-			int entityIndex = m_Entities.Count - 1;
+        public int RegisterEntity(MappedObject entity, Vector3 position, out int firstKey)
+        {
+            if (!m_IsInitialized)
+                Init();
 
-			int newKey = Mathf.RoundToInt(_Position.x / m_TileSize) * c_MapComputationFactor + Mathf.RoundToInt(_Position.z / m_TileSize);
-			AddNewKey(newKey, entityIndex);
+            firstKey = InitEntity(position, entity);
 
-			return newKey;
-		}
+            return m_Entities.Count - 1;
+        }
 
-		public int UpdateEntity(int _LastKey, Vector3 _Position, int _EntityIndex)
-		{
-			int newKey = Mathf.RoundToInt(_Position.x / m_TileSize) * c_MapComputationFactor + Mathf.RoundToInt(_Position.z / m_TileSize);
-			RemoveOldKey(_LastKey, _EntityIndex);
-			AddNewKey(newKey, _EntityIndex);
-			return newKey;
-		}
+        public void UnregisterEntity(int lastKey, int entityIndex)
+        {
+            RemoveOldKey(lastKey, entityIndex);
+            m_PrevBuffer.Remove(m_Entities[entityIndex]);
+            m_Entities[entityIndex] = null;
+        }
 
-		public void Check(Vector3 _Position)
-		{
-			FindEntities(_Position, m_RadiusDetection, ref m_SearchBuffer);
-      
-			m_SearchBuffer.ForEach(entity =>
-			{
-				if (m_PrevBuffer.Contains(entity) == false)
-				{
-					m_PrevBuffer.Add(entity);
-					OnEnter?.Invoke(entity);
-				}
-			});
-			
-			m_PrevBuffer.ForEach(entity =>
-			{
-				if (!m_SearchBuffer.Contains(entity))
-					m_TMPBuffer.Add(entity);
-			});
-      
-			m_TMPBuffer.ForEach(entity =>
-			{
-				m_PrevBuffer.Remove(entity);
-				OnExit?.Invoke(entity);
-			});
-      
-			m_TMPBuffer.Clear();
-		}
-		
-		public bool IsEntityPresent(Vector3 _Position, float _SqrRadius, int _Layer = -1)
-		{
-			if (m_Datas == null)
-				return false;
+        private int InitEntity(Vector3 position, MappedObject entity)
+        {
+            m_Entities.Add(entity);
+            int entityIndex = m_Entities.Count - 1;
 
-			int passCount = GetPassCount(_SqrRadius);
+            int newKey = ComputeKey(position);
+            AddNewKey(newKey, entityIndex);
 
-			int XBase = Mathf.RoundToInt(_Position.x / m_TileSize);
-			int ZBase = Mathf.RoundToInt(_Position.z / m_TileSize);
+            return newKey;
+        }
 
-			for (int XIndex = -passCount; XIndex <= passCount; ++XIndex)
-			{
-				for (int ZIndex = -passCount; ZIndex <= passCount; ++ZIndex)
-				{
-					int XCurrent = XBase + XIndex;
-					int ZCurrent = ZBase + ZIndex;
+        public int UpdateEntity(int lastKey, Vector3 position, int entityIndex)
+        {
+            int newKey = ComputeKey(position);
 
-					float x = _Position.x - (m_TileSize * XCurrent);
-					float z = _Position.z - (m_TileSize * ZCurrent);
+            RemoveOldKey(lastKey, entityIndex);
+            AddNewKey(newKey, entityIndex);
 
-					float sqrMagnitude = x * x + z * z;
-					if (sqrMagnitude > _SqrRadius + m_SqrTileFactor)
-						continue;
+            return newKey;
+        }
 
-					int key = XCurrent * c_MapComputationFactor + ZCurrent;
+        public void Check(Vector3 position)
+        {
+            FindEntities(position, m_RadiusDetection, ref m_SearchBuffer);
 
-					if (m_Datas[key] == null)
-						continue;
+            foreach (var entity in m_SearchBuffer)
+            {
+                if (!m_PrevBuffer.Contains(entity))
+                {
+                    m_PrevBuffer.Add(entity);
+                    OnEnter?.Invoke(entity.gameObject);
+                }
+            }
 
-					List<int> entityIndexes = (List<int>)m_Datas[key];
+            foreach (var entity in m_PrevBuffer)
+            {
+                if (!m_SearchBuffer.Contains(entity))
+                    m_TMPBuffer.Add(entity);
+            }
 
-					for (int index = 0; index < entityIndexes.Count; index++)
-					{
-						int entityIndex = entityIndexes[index];
-						GameObject entity = m_Entities[entityIndex];
+            foreach (var entity in m_TMPBuffer)
+            {
+                m_PrevBuffer.Remove(entity);
+                OnExit?.Invoke(entity.gameObject);
+            }
 
-						if (entity == null || (_Layer != -1 && entity.layer != _Layer))
-							continue;
+            m_TMPBuffer.Clear();
+        }
 
-						Vector3 entityDiff = entity.transform.position - _Position;
+        public bool IsEntityPresent(Vector3 position, float sqrRadius, int layer = -1)
+        {
+            if (m_Datas == null)
+                return false;
 
-						if (entityDiff.sqrMagnitude < _SqrRadius)
-							return true;
-					}
-				}
-			}
 
-			return false;
-		}
+            int passCount = GetPassCount(sqrRadius);
 
-		public void FindEntities(Vector3 _Position, float _SqrRadius, ref List<GameObject> _Results, int _Layer = -1)
-		{
-			if (_Results == null)
-				_Results = new List<GameObject>();
-			else
-				_Results.Clear();
+            int XBase = Mathf.RoundToInt(position.x / m_TileSize);
+            int ZBase = Mathf.RoundToInt(position.z / m_TileSize);
 
-			if (m_Datas == null)
-				return;
+            for (int XIndex = -passCount; XIndex <= passCount; ++XIndex)
+            {
+                for (int ZIndex = -passCount; ZIndex <= passCount; ++ZIndex)
+                {
+                    int XCurrent = XBase + XIndex;
+                    int ZCurrent = ZBase + ZIndex;
 
-			int passCount = GetPassCount(_SqrRadius);
+                    float x = position.x - (m_TileSize * XCurrent);
+                    float z = position.z - (m_TileSize * ZCurrent);
 
-			int XBase = Mathf.RoundToInt(_Position.x / m_TileSize);
-			int ZBase = Mathf.RoundToInt(_Position.z / m_TileSize);
+                    float sqrMagnitude = x * x + z * z;
+                    if (sqrMagnitude > sqrRadius + m_SqrTileFactor)
+                        continue;
 
-			for (int XIndex = -passCount; XIndex <= passCount; ++XIndex)
-			{
-				for (int ZIndex = -passCount; ZIndex <= passCount; ++ZIndex)
-				{
-					int XCurrent = XBase + XIndex;
-					int ZCurrent = ZBase + ZIndex;
+                    int key = XCurrent * c_MapComputationFactor + ZCurrent;
 
-					float x = _Position.x - (m_TileSize * XCurrent);
-					float z = _Position.z - (m_TileSize * ZCurrent);
+                    if (!m_Datas.TryGetValue(key, out var entityIndices))
+                        continue;
 
-					float sqrMagnitude = x * x + z * z;
+                    foreach (int entityIndex in entityIndices)
+                    {
+                        MappedObject entity = m_Entities[entityIndex];
+                        if (entity == null || (layer != -1 && entity.gameObject.layer != layer))
+                            continue;
 
-					if (sqrMagnitude > _SqrRadius + m_SqrTileFactor)
-						continue;
+                        float entityDiff = Vector3.Distance(entity.transform.position, position);
 
-					int key = XCurrent * c_MapComputationFactor + ZCurrent;
+                        if (entityDiff < sqrRadius + entity.m_Radius * entity.m_Radius)
+                            return true;
+                    }
+                }
+            }
 
-					if (m_Datas[key] == null)
-						continue;
+            return false;
+        }
 
-					List<int> entityIndexes = (List<int>)m_Datas[key];
+        public void FindEntities(Vector3 position, float sqrRadius, ref List<MappedObject> results, int layer = -1)
+        {
+            if (results == null)
+                results = new List<MappedObject>();
+            else
+                results.Clear();
 
-					for (int index = 0; index < entityIndexes.Count; index++)
-					{
-						int entityIndex = entityIndexes[index];
-						GameObject entity = m_Entities[entityIndex];
-						if (entity == null || (_Layer != -1 && entity.layer != _Layer))
-							continue;
+            if (m_Datas == null)
+                return;
 
-						Vector3 entityDiff = entity.transform.position - _Position;
+            int passCount = GetPassCount(sqrRadius);
 
-						if (entityDiff.sqrMagnitude < _SqrRadius)
-							_Results.Add(entity);
-					}
-				}
-			}
-		}
+            int XBase = Mathf.RoundToInt(position.x / m_TileSize);
+            int ZBase = Mathf.RoundToInt(position.z / m_TileSize);
 
-		public void Clear()
-		{
-			if (m_Entities != null)
-				m_Entities.Clear();
+            for (int XIndex = -passCount; XIndex <= passCount; ++XIndex)
+            {
+                for (int ZIndex = -passCount; ZIndex <= passCount; ++ZIndex)
+                {
+                    int XCurrent = XBase + XIndex;
+                    int ZCurrent = ZBase + ZIndex;
 
-			if (m_Datas != null)
-				m_Datas.Clear();
-		}
+                    float x = position.x - (m_TileSize * XCurrent);
+                    float z = position.z - (m_TileSize * ZCurrent);
 
-		#endregion
+                    float sqrMagnitude = x * x + z * z;
 
-		#region Internal
+                    if (sqrMagnitude > sqrRadius + m_SqrTileFactor)
+                        continue;
 
-		private void Init()
-		{
-			m_IsInitialized = true;
-			m_Datas = new Hashtable();
-			m_Entities = new List<GameObject>();
+                    int key = XCurrent * c_MapComputationFactor + ZCurrent;
 
-			m_SqrTileFactor = m_TileSize / Mathf.Sqrt(Mathf.PI);
-			m_SqrTileFactor *= m_SqrTileFactor;
-		}
+                    if (!m_Datas.TryGetValue(key, out var entityIndices))
+                        continue;
 
-		private void RemoveOldKey(int _OldKey, int _EntityIndex)
-		{
-			List<int> indexes = (List<int>)m_Datas[_OldKey];
+                    foreach (int entityIndex in entityIndices)
+                    {
+                        MappedObject entity = m_Entities[entityIndex];
+                        if (entity == null || (layer != -1 && entity.gameObject.layer != layer))
+                            continue;
+                        
+                        float entityDiff = Vector3.Distance(entity.transform.position, position);
 
-			if (indexes == null)
-				return;
+                        if (entityDiff < entity.m_Radius * entity.m_Radius + sqrRadius)
+                            results.Add(entity);
+                    }
+                }
+            }
+        }
 
-			if (indexes.Count == 1)
-			{
-				indexes.Clear();
-				m_Datas[_OldKey] = null;
-			}
-			else
-			{
-				indexes.Remove(_EntityIndex);
-				m_Datas[_OldKey] = indexes;
-			}
-		}
+        public void Clear()
+        {
+            m_SearchBuffer?.Clear();
+            m_PrevBuffer?.Clear();
+            m_TMPBuffer?.Clear();
 
-		private void AddNewKey(int _NewKey, int _EntityIndex)
-		{
-			if (m_Datas[_NewKey] != null)
-			{
-				List<int> indexes = (List<int>)m_Datas[_NewKey];
-				indexes.Add(_EntityIndex);
-			}
-			else
-			{
-				List<int> indexes = new List<int>();
-				indexes.Add(_EntityIndex);
-				m_Datas[_NewKey] = indexes;
-			}
-		}
+            m_Entities?.Clear();
+            m_Datas?.Clear();
+        }
 
-		private int GetPassCount(float _SqrRadius)
-		{
-			int passCount = Mathf.RoundToInt(_SqrRadius / (m_TileSize * m_TileSize));
-			if (passCount == 0) passCount = 1;
-			return passCount;
-		}
+        #endregion
 
-		#endregion
+        #region Internal
+
+        private void Init()
+        {
+            m_IsInitialized = true;
+            m_Datas = new Dictionary<int, List<int>>();
+            m_Entities = new List<MappedObject>();
+
+            m_SqrTileFactor = m_TileSize / Mathf.Sqrt(Mathf.PI);
+            m_SqrTileFactor *= m_SqrTileFactor;
+        }
+
+        private void RemoveOldKey(int oldKey, int entityIndex)
+        {
+            if (!m_Datas.TryGetValue(oldKey, out var indices))
+                return;
+
+            if (indices.Count == 1)
+            {
+                indices.Clear();
+                m_Datas.Remove(oldKey);
+            }
+            else
+            {
+                indices.Remove(entityIndex);
+            }
+        }
+
+        private void AddNewKey(int newKey, int entityIndex)
+        {
+            if (m_Datas.TryGetValue(newKey, out var indexes))
+            {
+                indexes.Add(entityIndex);
+            }
+            else
+            {
+                m_Datas.Add(newKey, new List<int> {entityIndex});
+            }
+        }
+
+        private int GetPassCount(float sqrRadius)
+        {
+            int passCount = Mathf.RoundToInt(sqrRadius / (m_TileSize * m_TileSize));
+            if (passCount == 0) passCount = 1;
+            return passCount;
+        }
+
+        #endregion
+
+        private int ComputeKey(Vector3 position)
+        {
+            return ComputeKey(Mathf.RoundToInt(position.x / m_TileSize), Mathf.RoundToInt(position.z / m_TileSize));
+        }
+
+        private static int ComputeKey(int x, int y)
+        {
+            return x * c_MapComputationFactor + y;
+        }
 
 #if UNITY_EDITOR
+        private readonly System.Text.StringBuilder _stringBuilder = new System.Text.StringBuilder();
 
-		public string GetNames()
-		{
-			if (m_Entities == null)
-				return string.Empty;
+        public string GetNames()
+        {
+            if (m_Entities == null)
+                return string.Empty;
 
-			string names = "";
-			for (int i = 0; i < m_Entities.Count; ++i)
-			{
-				if (m_Entities[i] == null)
-					names += "<NULL>\n";
-				else
-					names += m_Entities[i].gameObject.name + "\n";
-			}
-			return names;
-		}
+            _stringBuilder.Clear();
+            foreach (var entity in m_Entities)
+            {
+                _stringBuilder.Append(entity != null ? entity.gameObject.name : "<null>");
+                _stringBuilder.Append('\n');
+            }
 
+            return _stringBuilder.ToString();
+        }
 #endif
-	}
+    }
 }

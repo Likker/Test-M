@@ -8,12 +8,16 @@ public class Enemy : MappedObject
    public int  m_Life;
    public bool m_Focusable { get; private set; }
 
+   // Cache
+   private SphereCollider m_SphereCollider;
+   
    protected override void Awake()
    {
       base.Awake();
-      m_Focusable = true;
+      m_SphereCollider = GetComponent<SphereCollider>();
+      m_Focusable      = true;
       EnemyManager.Instance.Register(this);
-      RegisterMap();
+      RegisterMap(m_SphereCollider.radius * m_SphereCollider.radius);
    }
 
    public bool Hit(int _Damage)

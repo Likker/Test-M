@@ -4,6 +4,8 @@ namespace CustomPackages
 {
 	public abstract class MappedObject : MonoBehaviour
 	{
+		public float m_Radius;
+		
         // Cache
         protected MappingManager m_MapManager;
 
@@ -21,9 +23,10 @@ namespace CustomPackages
 			m_MapManager = MappingManager.Instance;
 		}
 
-		protected void RegisterMap()
+		protected void RegisterMap(float _Radius)
 		{
-			m_MapIndex   = m_MapManager.RegisterEntity(gameObject, transform.position, out m_LastMapKey);
+			m_Radius     = _Radius;
+			m_MapIndex   = m_MapManager.RegisterEntity(this, transform.position, out m_LastMapKey);
 			m_Registered = true;
 		}
 

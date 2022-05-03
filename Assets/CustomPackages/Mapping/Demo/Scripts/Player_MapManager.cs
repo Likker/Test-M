@@ -7,11 +7,11 @@ namespace CustomPackages
 	{
 		private const float m_Radius = 2.0f;
 
-		private List<GameObject> m_SearchBuffer;
+		private List<MappedObject> m_SearchBuffer;
 
 		private void Awake()
 		{
-			m_SearchBuffer = new List<GameObject>();
+			m_SearchBuffer = new List<MappedObject>();
 		}
 
 		private void Update()
@@ -22,7 +22,7 @@ namespace CustomPackages
 				if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, cam.farClipPlane))
 				{
 					MappingManager.Instance.FindEntities(hit.point, m_Radius * m_Radius, ref m_SearchBuffer);
-					m_SearchBuffer.ForEach(x => SelectEntity(x));
+					m_SearchBuffer.ForEach(x => SelectEntity(x.gameObject));
 				}
 			}
 		}

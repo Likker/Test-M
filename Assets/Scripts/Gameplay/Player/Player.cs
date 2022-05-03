@@ -6,23 +6,26 @@ using UnityEngine;
 
 public class Player : SingletonMB<Player>
 {
-   private  float m_RadiusCollision;
-
+   private       float m_RadiusCollision;
+   private const float c_OffsetRadius = 2.0f;
+   
    // CACHE
-   private PlayerController m_PlayerController;
-   private PlayerEquiment   m_PlayerEquiment;
+   private PlayerController   m_PlayerController;
+   private PlayerEquiment     m_PlayerEquiment;
+   private CircleLineRenderer m_CircleRenderer;
    
    // BUFFER
    private bool             m_IsTargetingEnemy;
    private Enemy            m_TargetEnemy;
-   private List<GameObject> m_SearchBuffer;
+   private List<MappedObject> m_SearchBuffer;
    private Vector3          m_DirectionNorm;
    
    private void Awake()
    {
       m_PlayerController = GetComponent<PlayerController>();
       m_PlayerEquiment   = GetComponent<PlayerEquiment>();
-      m_SearchBuffer     = new List<GameObject>();
+      m_CircleRenderer   = GetComponentInChildren<CircleLineRenderer>();
+      m_SearchBuffer     = new List<MappedObject>();
       m_IsTargetingEnemy = false;
 
       m_PlayerEquiment.OnEquipWeapon += OnEquipWeapon;
@@ -37,6 +40,7 @@ public class Player : SingletonMB<Player>
    {
       m_PlayerController.m_Speed = m_PlayerEquiment.GetMovementSpeed();
       m_RadiusCollision          = m_PlayerEquiment.GetAttackRange();
+      m_CircleRenderer.SetRadius(m_RadiusCollision * m_RadiusCollision);
    }
    
    public void SearchEnemy()
@@ -50,14 +54,22 @@ public class Player : SingletonMB<Player>
    {
       Debug.Log("ATTACK");
    }
-   
+
    private void Update()
    {
-      MappingManager.Instance.FindEntities(m_PlayerController.GetPosition(), m_RadiusCollision * m_RadiusCollision, ref m_SearchBuffer);
+      if (!MappingManager.Instance.IsEntityPresent(m_PlayerController.GetPosition(), GetRadiusDetection()))
+         return;
+      
+      MappingManager.Instance.FindEntities(m_PlayerController.GetPosition(), GetRadiusDetection(), ref m_SearchBuffer);
       if (m_SearchBuffer.Count > 0)
          Attack();
    }
 
+   private float GetRadiusDetection()
+   {
+      return m_RadiusCollision * m_RadiusCollision;
+   }
+   
    private void OnDrawGizmos()
    {
       if (m_PlayerController == null)
