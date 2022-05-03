@@ -4,7 +4,7 @@ namespace CustomPackages
 {
 	public abstract class MappedObject : MonoBehaviour
 	{
-		public float m_Radius;
+		public float m_Radius { get; private set; }
 		
         // Cache
         protected MappingManager m_MapManager;
@@ -40,6 +40,12 @@ namespace CustomPackages
 			if (m_Registered)
 				m_MapManager.UnregisterEntity(m_LastMapKey, m_MapIndex);
 			m_Registered = false;
+		}
+		
+		private void OnDrawGizmos()
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(transform.position, m_Radius);
 		}
 	}
 }

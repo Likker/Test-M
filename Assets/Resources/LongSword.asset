@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb4f2804b844ef241918afd4668864a0, type: 3}
   m_Name: LongSword
   m_EditorClassIdentifier: 
-  m_AttackAnimationSpeed: 0
-  m_DamageAnimationTiming: 0
-  m_MovementSpeed: 0
-  m_AttackRange: 0
+  m_AttackAnimationSpeed: 0.25
+  m_DamageAnimationTiming: 2
+  m_MovementSpeed: 4
+  m_AttackRange: 2.5

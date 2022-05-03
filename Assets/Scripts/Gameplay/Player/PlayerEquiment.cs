@@ -3,23 +3,28 @@ using UnityEngine;
 
 public class PlayerEquiment : MonoBehaviour
 {
+	[Header("CONFIG")]
+	public Transform m_WeaponSlot;
+	
 	public Action OnEquipWeapon;
 	
 	// CACHE
 	private WeaponScritableObject m_CurrentWeaponData;
-	private GameObject            m_WeaponModel;
+	private GameObject            m_InstantiatedWeaponModel;
 	
 	private void Start()
 	{
 		Equip(WeaponManager.Instance.GetRandomWeapon());
+		
 		OnEquipWeapon?.Invoke();
 	}
 
 	private void Equip(WeaponDataObj _Weapon)
 	{
 		m_CurrentWeaponData = _Weapon.m_WeaponData;
-		
-		// Instantiate Weapon Model
+
+		m_InstantiatedWeaponModel                         = Instantiate(_Weapon.m_ModelWeapon, m_WeaponSlot);
+		m_InstantiatedWeaponModel.transform.localPosition = Vector3.zero;
 	}
 
 	public float GetAttackAnimationSpeed()

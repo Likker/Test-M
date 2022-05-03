@@ -62,6 +62,11 @@ public class PlayerController : MonoBehaviour, IJoystickController
 		transform.forward = Vector3.Lerp(transform.forward, _Direction, Time.fixedDeltaTime * 12.0f);
 		m_RigidBody.MovePosition(m_RigidBody.position + _Direction.normalized * (m_Speed * Time.fixedDeltaTime));
 	}
+
+	public bool IsMoving()
+	{
+		return m_IsMoving;
+	}
 	
 	private void FixedUpdate()
 	{

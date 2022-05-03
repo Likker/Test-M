@@ -16,8 +16,12 @@ public class Enemy : MappedObject
       base.Awake();
       m_SphereCollider = GetComponent<SphereCollider>();
       m_Focusable      = true;
+   }
+
+   private void Start()
+   {
       EnemyManager.Instance.Register(this);
-      RegisterMap(m_SphereCollider.radius * m_SphereCollider.radius);
+      RegisterMap(m_SphereCollider.radius);
    }
 
    public bool Hit(int _Damage)
