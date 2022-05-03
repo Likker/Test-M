@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using CustomPackages;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : SingletonMB<Player>
 {
    [Header("CONFIG")]
    public  float m_RadiusCollision;
-   
+
    // CACHE
    private PlayerController m_PlayerController;
    
@@ -22,9 +22,10 @@ public class Player : MonoBehaviour
    {
       m_PlayerController             =  GetComponent<PlayerController>();
       m_SearchBuffer                 =  new List<GameObject>();
+      m_IsTargetingEnemy             =  false;
+      
       m_PlayerController.OnStartMove += OnStartMove;
       m_PlayerController.OnStopMove  += OnStopMove;
-      m_IsTargetingEnemy             =  false;
    }
 
    private void OnDestroy()
@@ -42,10 +43,17 @@ public class Player : MonoBehaviour
    private void OnStopMove()
    {
       m_IsTargetingEnemy = true;
-      m_TargetEnemy      = EnemyManager.Instance.GetClosestEnemy(transform.position);
+      SearchEnemy();
    }
 
-   public void Attack()
+   public void SearchEnemy()
+   {
+      if (m_IsTargetingEnemy == false)
+         return;
+      m_TargetEnemy = EnemyManager.Instance.GetClosestEnemy(transform.position);
+   }
+   
+   private void Attack()
    {
       Debug.Log("ATTACK");
    }
