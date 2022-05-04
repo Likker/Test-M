@@ -59,6 +59,9 @@ public class PlayerController : MonoBehaviour, IJoystickController
 
 	public void Move(Vector3 _Direction)
 	{
+		if (FSMManager.Instance.CurrentPhase != GamePhase.GAME)
+			return;
+		
 		transform.forward = Vector3.Lerp(transform.forward, _Direction, Time.fixedDeltaTime * 12.0f);
 		m_RigidBody.MovePosition(m_RigidBody.position + _Direction.normalized * (m_Speed * Time.fixedDeltaTime));
 	}

@@ -14,14 +14,11 @@ public class PoolData
 [DefaultExecutionOrder(-1)]
 public class PoolManager : SingletonMB<PoolManager>
 {
-    public bool logStatus;
     public List<PoolData> m_PoolDatas;
 
     private Dictionary<GameObject, ObjectPool<GameObject>> _prefabLookup;
     private Dictionary<GameObject, ObjectPool<GameObject>> _instanceLookup; 
     
-    private bool dirty = false;
-
     private void Awake()
     {
         _prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
@@ -47,7 +44,7 @@ public class PoolManager : SingletonMB<PoolManager>
         clone.transform.SetPositionAndRotation(position, rotation);
         clone.SetActive(true);
 
-        dirty = true;
+
 
         return clone;
     }
@@ -64,7 +61,6 @@ public class PoolManager : SingletonMB<PoolManager>
         if (_instanceLookup.TryGetValue(clone, out var objectPool))
         {
             objectPool.ReleaseItem(clone);
-            dirty = true;
         }
         else
             Debug.LogWarning("No pool contains the object: " + clone.name);
@@ -92,8 +88,6 @@ public class PoolManager : SingletonMB<PoolManager>
 
         var objectPool = new ObjectPool<GameObject>(objectPool => InstantiatePrefab(objectPool, prefab), size);
         _prefabLookup.Add(prefab, objectPool);
-
-        dirty = true;
 
         return objectPool;
     }

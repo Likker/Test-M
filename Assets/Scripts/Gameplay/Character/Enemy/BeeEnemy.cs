@@ -16,6 +16,9 @@ public class BeeEnemy : Enemy
 
 	[Header("REF")]
 	public GameObject m_Projectile;
+
+	// CACHE
+	private Coroutine m_LaunchProjCo;
 	
 	protected override void Awake()
 	{
@@ -30,13 +33,27 @@ public class BeeEnemy : Enemy
 
 	private void OnGamePhaseChanged(GamePhase _OldPhase, GamePhase _CurrentPhase)
 	{
-		if (_CurrentPhase == GamePhase.GAME)
-			LaunchProjectile();
+		switch (_CurrentPhase)
+		{
+			case GamePhase.GAME:
+				LaunchProjectile();
+				break;
+			case GamePhase.FAILURE:
+			case GamePhase.SUCCESS:
+			{
+				if (m_LaunchProjCo != null)
+					StopCoroutine(m_LaunchProjCo);
+				break;
+			}
+				
+		}
+		
+			
 	}
 
 	private void LaunchProjectile()
 	{
-		StartCoroutine(LaunchProjectileCoroutine(LaunchProjectile));
+		m_LaunchProjCo = StartCoroutine(LaunchProjectileCoroutine(LaunchProjectile));
 	}
 
 	private IEnumerator LaunchProjectileCoroutine(Action _Callback)

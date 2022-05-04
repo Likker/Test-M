@@ -25,7 +25,6 @@ public class Player : Character
    private CircleLineRenderer m_CircleRenderer;
    
    // BUFFER
-   private bool               m_IsTargetingEnemy;
    private Enemy              m_TargetEnemy;
    private List<MappedObject> m_SearchBuffer;
    private Vector3            m_DirectionNorm;
@@ -45,8 +44,9 @@ public class Player : Character
       m_PlayerEquiment   = GetComponent<PlayerEquiment>();
       m_CircleRenderer   = GetComponentInChildren<CircleLineRenderer>();
       m_SearchBuffer     = new List<MappedObject>();
-      m_IsTargetingEnemy = false;
       m_PlayerState      = EPlayerState.NONE;
+
+      OnHit += ProgressionView.Instance.UpdateLife;
 
       m_PlayerController.OnStartMove += OnStartMove;
       m_PlayerEquiment.OnEquipWeapon += OnEquipWeapon;
