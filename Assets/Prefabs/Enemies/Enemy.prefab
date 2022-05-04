@@ -61,6 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Life: 3
+  m_TooltipDamage: {fileID: 8737950437389888257, guid: d4a41f8d67ded2e4696e6490857a4565, type: 3}
 --- !u!135 &7631317658869487115
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -246,7 +247,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8042345608382941055}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99be452b0b2fbb840a6e2cdf9d60d4d3, type: 3}
   m_Name: 

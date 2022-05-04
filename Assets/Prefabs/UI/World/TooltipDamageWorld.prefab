@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 5018220042170937764}
   - component: {fileID: 619201906525392471}
   - component: {fileID: 330848636487845634}
+  - component: {fileID: 1779144157198691687}
   m_Layer: 0
   m_Name: TooltipDamageWorld
   m_TagString: Untagged
@@ -279,10 +280,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a495a418a0569246a2b6c3dcfe2d005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphic: {fileID: 0}
+  graphic: {fileID: 7792107717469796766}
   duration: 1
-  startColor: {r: 1, g: 0.19339621, b: 0.19339621, a: 1}
-  endColor: {r: 1, g: 0.19215687, b: 0.19215687, a: 0}
+  startColor: {r: 1, g: 1, b: 1, a: 1}
+  endColor: {r: 1, g: 1, b: 1, a: 0}
   curve:
     serializedVersion: 2
     m_Curve:
@@ -316,3 +317,15 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1779144157198691687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8737950437389888257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99be452b0b2fbb840a6e2cdf9d60d4d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
