@@ -1,21 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using CustomPackages;
 using UnityEngine;
 
-public class Enemy : MappedObject
+public class Enemy : MappedObject, ICharacter
 {
-   public int  m_Life;
-
+   public  int m_Life;
+   private int m_MaxLife;
+   
    // Cache
    private SphereCollider m_SphereCollider;
    private BumpEffect     m_BumpEffect;
+   
+   public Action<float> OnHit { get; set; }
    
    protected override void Awake()
    {
       base.Awake();
       m_SphereCollider = GetComponent<SphereCollider>();
-      m_BumpEffect     = GetComponent<BumpEffect>();
+      m_BumpEffect     = GetComponentInChildren<BumpEffect>();
+
+      m_MaxLife = m_Life;
    }
 
    private void Start()
@@ -24,10 +28,14 @@ public class Enemy : MappedObject
       RegisterMap(m_SphereCollider.radius);
    }
 
-   public void Hit(int _Damage)
+   public void TakeDamage(int _Damage)
    {
-      m_BumpEffect.Play();
+      if (m_BumpEffect != null)
+         m_BumpEffect.Play();
+      
       m_Life -= _Damage;
+      OnHit?.Invoke(Mathf.Clamp01((float)m_Life / (float)m_MaxLife));
+      
       if (m_Life <= 0)
          Die();
    }
@@ -42,4 +50,6 @@ public class Enemy : MappedObject
       // Pooling ?
       Destroy(gameObject);
    }
+
+
 }

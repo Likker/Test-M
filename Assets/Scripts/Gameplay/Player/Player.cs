@@ -151,7 +151,7 @@ public class Player : SingletonMB<Player>
       transform.forward = Vector3.Lerp(transform.forward, _Enemy.transform.position - m_PlayerController.GetPosition(),
                                        Time.deltaTime * 8.0f);
       yield return new WaitForSeconds(m_PlayerEquiment.GetDamageAnimationTiming());
-      _Enemy.Hit(1);
+      _Enemy.TakeDamage(1);
    }
 
    private void OnDrawGizmos()
