@@ -19,8 +19,16 @@ public class PlayerEquiment : MonoBehaviour
 		OnEquipWeapon?.Invoke();
 	}
 
-	private void Equip(WeaponDataObj _Weapon)
+	public void Equip(int _ID)
 	{
+		Equip(WeaponManager.Instance.GetWeaponByID(_ID));
+	}
+	
+	private void Equip(WeaponWrapper _Weapon)
+	{
+		if (m_InstantiatedWeaponModel != null)
+			Destroy(m_InstantiatedWeaponModel);
+		
 		m_CurrentWeaponData = _Weapon.m_WeaponData;
 
 		m_InstantiatedWeaponModel                         = Instantiate(_Weapon.m_ModelWeapon, m_WeaponSlot);

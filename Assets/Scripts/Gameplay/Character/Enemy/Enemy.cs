@@ -1,6 +1,6 @@
-using System;
-using CustomPackages;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public abstract class Enemy : Character
 {
@@ -21,6 +21,11 @@ public abstract class Enemy : Character
    
    protected override void Die()
    {
+      if (Random.value < 1.0f)
+      {
+         Instantiate(WeaponManager.Instance.m_WeaponDrop, transform.position, quaternion.identity);
+      }
+      
       EnemyManager.Instance.Unregister(this);
       UnregisterMap();
 

@@ -50,3 +50,4 @@ MonoBehaviour:
     m_ModelWeapon: {fileID: 478356759475107179, guid: 17cf6e9fc28f3a544bc062d510f66f4a, type: 3}
   - m_WeaponData: {fileID: 11400000, guid: 0602cfe1078831b4e84ce7a1e9f83f45, type: 2}
     m_ModelWeapon: {fileID: 6937623146161485751, guid: 4d0814cafad460246890ec829fa7071d, type: 3}
+  m_WeaponDrop: {fileID: 189661397161609559, guid: 509d3b876b2290543973e4ebd11e8b32, type: 3}

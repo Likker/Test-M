@@ -32,18 +32,20 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 7af1d8ba21a96244d8645bdfa81edece, type: 3}
-    totalSpriteSurfaceArea: 82388
+    totalSpriteSurfaceArea: 344532
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 549cf4203ed91924fba5a37dccc16096, type: 3}
+  - {fileID: 21300000, guid: 27f7fbe0ad05ac64abdd3933d0f6ddac, type: 3}
   - {fileID: -2413806693520163455, guid: e02b5a425513c1a4481ea98b6d74b41c, type: 3}
   - {fileID: 21300000, guid: 8e75d9f251c95bb44a02bc4fab310c0d, type: 3}
   - {fileID: 21300000, guid: b72686575cfdbcc4487a9f58097ce943, type: 3}
   m_PackedSpriteNamesToIndex:
   - Dot
+  - Sprite_Gradient
   - Circle
   - Health-Bar
   - WhiteSquare

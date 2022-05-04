@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class WeaponManager : SingletonMB<WeaponManager>
 {
-	public List<WeaponDataObj> m_Weapons;
-
-	public WeaponDataObj GetRandomWeapon()
+	public List<WeaponWrapper> m_Weapons;
+	public GameObject          m_WeaponDrop;
+	
+	public WeaponWrapper GetRandomWeapon()
 	{
 		return m_Weapons[Random.Range(0, m_Weapons.Count)];
+	}
+
+	public WeaponWrapper GetWeaponByID(int _ID)
+	{
+		return m_Weapons[_ID];
 	}
 }

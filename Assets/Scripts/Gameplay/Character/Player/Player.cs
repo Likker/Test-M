@@ -57,6 +57,11 @@ public class Player : Character
       m_PlayerController.OnStartMove -= OnStartMove;
       m_PlayerEquiment.OnEquipWeapon -= OnEquipWeapon;
    }
+
+   public void Equip(int _ID)
+   {
+      m_PlayerEquiment.Equip(_ID);
+   }
    
    private void OnEquipWeapon()
    {
