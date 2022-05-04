@@ -12,7 +12,9 @@ public abstract class Character : MappedObject, IHittable
 	private int        m_MaxLife;
 	private BumpEffect m_BumpEffect;
 
-	public Action<float> OnHit { get; set; }
+	public Action        OnAttack { get; set; }
+	public Action<float> OnHit    { get; set; }
+	public Action        OnDie    { get; set; }
 	
 	protected override void Awake()
 	{
@@ -29,9 +31,13 @@ public abstract class Character : MappedObject, IHittable
 		m_Life -= _Damage;
 		OnHit?.Invoke(Mathf.Clamp01((float)m_Life / (float)m_MaxLife));
 		SpawnTooltipDamage(_Damage);
-		
-		if (m_Life <= 0)
+
+		if (m_Life <= 0 && m_Life + _Damage > 0)
+		{
+			OnDie?.Invoke();
 			Die();
+		}
+
 	}
 	
 	private void SpawnTooltipDamage(int _Damage)
@@ -42,6 +48,27 @@ public abstract class Character : MappedObject, IHittable
 						   .GetComponent<TooltipDamageWorld>();
 		tooltipDamage.Play(_Damage, () => PoolManager.Instance.ReleaseObject(tooltipDamage));
 	}
-	
-	protected abstract void Die();
+
+	protected virtual void Die()
+	{
+		if (this is Enemy)
+			StartCoroutine(DieCoroutine());
+	}
+
+	private IEnumerator DieCoroutine()
+	{
+		Vector3 baseScale = transform.localScale;
+		float   time      = 0.0f;
+		
+		yield return new WaitForSeconds(0.75f);
+
+		while (time < 0.35f)
+		{
+			transform.localScale =  Vector3.Lerp(baseScale, Vector3.zero, time / 0.35f);
+			time                 += Time.deltaTime;
+			yield return null;
+		}
+		
+		Destroy(gameObject);
+	}
 }

@@ -9,11 +9,6 @@ public class FacePlayer : MonoBehaviour
    
    // Cache
    private Vector3 m_CacheDir;
-   
-   private void Awake()
-   {
-      
-   }
 
    private void LateUpdate()
    {

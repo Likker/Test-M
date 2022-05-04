@@ -23,6 +23,7 @@ public class PlayerAnimator : MonoBehaviour
 		m_PlayerController.OnStartMove  += Refresh;
 		m_PlayerController.OnStopMove   += Refresh;
 		m_PlayerEquipment.OnEquipWeapon += OnEquipWeapon;
+		m_Player.OnDie                  += OnDie;
 	}
 
 	private void OnDestroy()
@@ -32,6 +33,7 @@ public class PlayerAnimator : MonoBehaviour
 		m_PlayerController.OnStartMove  -= Refresh;
 		m_PlayerController.OnStopMove   -= Refresh;
 		m_PlayerEquipment.OnEquipWeapon -= OnEquipWeapon;
+		m_Player.OnDie                  -= OnDie;
 	}
 
 	private void OnEquipWeapon()
@@ -47,6 +49,12 @@ public class PlayerAnimator : MonoBehaviour
 	private void OnStopAttack()
 	{
 		Refresh();
+	}
+
+	private void OnDie()
+	{
+		m_Animator.SetTrigger("Die");
+
 	}
 
 	private void Refresh()

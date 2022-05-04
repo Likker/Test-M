@@ -149,6 +149,7 @@ public class Player : Character
    
    protected override void Die()
    {
+      GetComponent<Collider>().enabled = false;
       if (FSMManager.Instance.CurrentPhase == GamePhase.GAME)
          FSMManager.Instance.ChangePhase(GamePhase.FAILURE);
    }

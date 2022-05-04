@@ -24,7 +24,6 @@ public abstract class Enemy : Character
       EnemyManager.Instance.Unregister(this);
       UnregisterMap();
 
-      // Something for die animation ?
-      Destroy(gameObject);
+      base.Die();
    }
 }

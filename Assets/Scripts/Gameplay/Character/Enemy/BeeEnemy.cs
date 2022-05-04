@@ -45,23 +45,21 @@ public class BeeEnemy : Enemy
 					StopCoroutine(m_LaunchProjCo);
 				break;
 			}
-				
 		}
-		
-			
 	}
 
 	private void LaunchProjectile()
 	{
+
 		m_LaunchProjCo = StartCoroutine(LaunchProjectileCoroutine(LaunchProjectile));
 	}
 
 	private IEnumerator LaunchProjectileCoroutine(Action _Callback)
 	{
 		yield return new WaitForSeconds(Random.Range(m_DelayLaunch.x, m_DelayLaunch.y));
+		OnAttack?.Invoke();
 		Projectile projectile = Instantiate(m_Projectile, transform.position, quaternion.identity).GetComponent<Projectile>();
 		projectile.Launch(m_Damage, transform.forward, m_SpeedProjectile, m_DurationMax, m_LayerMask);
-		
 		_Callback?.Invoke();
 	}
 }
