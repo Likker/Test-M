@@ -23,8 +23,7 @@ public class Enemy : Character
    {
       EnemyManager.Instance.Unregister(this);
       UnregisterMap();
-      Player.Instance.SearchEnemy();
-      
+
       // Something for die animation ?
       Destroy(gameObject);
    }

@@ -10,7 +10,7 @@ public enum EPlayerState
    ATTACK
 }
 
-public class Player : SingletonMB<Player>
+public class Player : Character
 {
    public  EPlayerState m_PlayerState { get; set; }
    
@@ -54,13 +54,6 @@ public class Player : SingletonMB<Player>
       m_PlayerController.m_Speed = m_PlayerEquiment.GetMovementSpeed();
       m_RadiusCollision          = m_PlayerEquiment.GetAttackRange();
       m_CircleRenderer.SetRadius(m_RadiusCollision);
-   }
-   
-   public void SearchEnemy()
-   {
-      if (m_IsTargetingEnemy == false)
-         return;
-      m_TargetEnemy = EnemyManager.Instance.GetClosestEnemy(transform.position);
    }
 
    private void OnStartMove()
@@ -144,6 +137,11 @@ public class Player : SingletonMB<Player>
       if (m_AttackCo != null)
          StopCoroutine(m_AttackCo);
       m_PlayerState = EPlayerState.NONE;
+   }
+   
+   protected override void Die()
+   {
+      
    }
    
    private IEnumerator AttackCoroutine(Enemy _Enemy)
