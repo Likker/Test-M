@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7735849, g: 0.105820596, b: 0.105820596, a: 1}
+  m_Color: {r: 0.14183041, g: 0.764151, b: 0.05406728, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -173,6 +173,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1237093284905562950}
+  - component: {fileID: 3780508605812467224}
+  - component: {fileID: 8298031002543343293}
   m_Layer: 0
   m_Name: HealthBar
   m_TagString: Untagged
@@ -202,6 +204,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3780508605812467224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1237093284905562949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ccc4b9a0b8db8d408e85c002a44fb71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LifeImage: {fileID: 1237093284058468481}
+  m_LifeDelayImage: {fileID: 1237093285432554406}
+--- !u!114 &8298031002543343293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1237093284905562949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99be452b0b2fbb840a6e2cdf9d60d4d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1237093285432554404
 GameObject:
   m_ObjectHideFlags: 0

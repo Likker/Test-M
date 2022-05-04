@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuView : View<MainMenuView>
 {
@@ -8,6 +9,16 @@ public class MainMenuView : View<MainMenuView>
 	{
         FSMManager.Instance.ChangePhase(GamePhase.GAME);
     }
+
+	protected override void Update()
+	{
+		base.Update();
+		if (Input.GetMouseButtonDown(0))
+		{
+			if (FSMManager.Instance.CurrentPhase == GamePhase.MAIN_MENU)
+				FSMManager.Instance.ChangePhase(GamePhase.GAME);
+		}
+	}
 
 	public void Show(int _Level)
 	{

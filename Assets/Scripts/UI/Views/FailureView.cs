@@ -4,6 +4,6 @@ public class FailureView : View<FailureView>
 {
 	public void OnContinueButton()
 	{
-        SceneManager.LoadScene("Game");
+		SceneManager.LoadScene(0);
     }
 }

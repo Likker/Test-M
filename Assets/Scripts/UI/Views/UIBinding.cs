@@ -17,6 +17,7 @@ public class UIBinding : MonoBehaviour
         switch (_NewPhase)
         {
             case GamePhase.MAIN_MENU:
+                MainMenuView.Instance.Show();
                 break;
 
             case GamePhase.GAME:

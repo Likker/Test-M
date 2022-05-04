@@ -20,9 +20,7 @@ public abstract class Character : MappedObject, IHittable
 		m_BumpEffect = GetComponentInChildren<BumpEffect>();
 		m_MaxLife    = m_Life;
 	}
-	
-	
-	
+
 	public void TakeDamage(int _Damage)
 	{
 		if (m_BumpEffect != null)

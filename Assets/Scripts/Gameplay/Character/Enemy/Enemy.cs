@@ -2,7 +2,7 @@ using System;
 using CustomPackages;
 using UnityEngine;
 
-public class Enemy : Character
+public abstract class Enemy : Character
 {
    // Cache
    private SphereCollider m_SphereCollider;
@@ -13,7 +13,7 @@ public class Enemy : Character
       m_SphereCollider = GetComponent<SphereCollider>();
    }
 
-   private void Start()
+   protected virtual void Start()
    {
       EnemyManager.Instance.Register(this);
       RegisterMap(m_SphereCollider.radius);

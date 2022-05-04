@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &2713355103700266917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5798823433942845102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac1253145567c8c46a2307bed0771a98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SpeedLerp: 2
+--- !u!114 &5930591295249139287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5798823433942845102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76abd255467374942b77fd3e719ae50f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Life: 3
+  m_TooltipDamage: {fileID: 8737950437389888257, guid: d4a41f8d67ded2e4696e6490857a4565, type: 3}
+  m_DelayLaunch: {x: 1, y: 5}
+  m_DurationMax: 5
+  m_SpeedProjectile: 5
+  m_Damage: 1
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 384
+  m_Projectile: {fileID: 2563798626028096720, guid: 918b1d1749310bb49ad744f4f4f5b3a1, type: 3}
 --- !u!1001 &6825159741596116544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55,5 +90,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BeeEnemy
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5885018832516323650, guid: ee85a6bc52f4c6e4095c4889961a6dba, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ee85a6bc52f4c6e4095c4889961a6dba, type: 3}
+--- !u!1 &5798823433942845102 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1066888770466210030, guid: ee85a6bc52f4c6e4095c4889961a6dba, type: 3}
+  m_PrefabInstance: {fileID: 6825159741596116544}
+  m_PrefabAsset: {fileID: 0}

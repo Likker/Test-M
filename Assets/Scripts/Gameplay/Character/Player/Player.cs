@@ -12,6 +12,8 @@ public enum EPlayerState
 
 public class Player : Character
 {
+   public static Player Instance = null;
+   
    public  EPlayerState m_PlayerState { get; set; }
    
    public Action OnStartAttack;
@@ -30,8 +32,15 @@ public class Player : Character
    private Coroutine          m_AttackCo;
    private float              m_RadiusCollision;
    
-   private void Awake()
+   protected override void Awake()
    {
+      base.Awake();
+
+      if (Instance == null)
+         Instance = this;
+      else if(Instance != this)
+         Destroy(gameObject);
+         
       m_PlayerController = GetComponent<PlayerController>();
       m_PlayerEquiment   = GetComponent<PlayerEquiment>();
       m_CircleRenderer   = GetComponentInChildren<CircleLineRenderer>();
@@ -84,7 +93,6 @@ public class Player : Character
    
    private void Update()
    {
-
       if (m_PlayerController.IsMoving())
          return;
 
@@ -141,7 +149,8 @@ public class Player : Character
    
    protected override void Die()
    {
-      
+      if (FSMManager.Instance.CurrentPhase == GamePhase.GAME)
+         FSMManager.Instance.ChangePhase(GamePhase.FAILURE);
    }
    
    private IEnumerator AttackCoroutine(Enemy _Enemy)

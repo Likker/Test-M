@@ -16,7 +16,7 @@ public class EnemyManager : SingletonMB<EnemyManager>
 	{
 		m_Enemies ??= new List<Enemy>();
 		m_Enemies.Remove(_Enemy);
-		if (m_Enemies.Count == 0)
+		if (m_Enemies.Count == 0 && FSMManager.Instance.CurrentPhase == GamePhase.GAME)
 			FSMManager.Instance.ChangePhase(GamePhase.SUCCESS);
 	}
 

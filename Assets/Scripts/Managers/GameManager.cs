@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 	private void Start()
 	{
 		Application.targetFrameRate = 60;
-		FSMManager.Instance.ChangePhase(GamePhase.GAME);
+		FSMManager.Instance.ChangePhase(GamePhase.MAIN_MENU);
 	}
 
 }
