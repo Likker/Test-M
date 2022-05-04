@@ -10,13 +10,13 @@ public class HealthBar : MonoBehaviour
    public Image m_LifeDelayImage;
    
    // CACHE
-   private Coroutine  m_DelayLifeCoroutine;
-   private ICharacter m_ICharacter;
+   private Coroutine m_DelayLifeCoroutine;
+   private IHittable m_Hittable;
    
    private void Awake()
    {
-      m_ICharacter       =  GetComponentInParent<ICharacter>();
-      m_ICharacter.OnHit += Refresh;
+      m_Hittable       =  GetComponentInParent<IHittable>();
+      m_Hittable.OnHit += Refresh;
 
       m_LifeImage.fillAmount      = 1.0f;
       m_LifeDelayImage.fillAmount = 1.0f;
@@ -24,7 +24,7 @@ public class HealthBar : MonoBehaviour
 
    private void OnDestroy()
    {
-      m_ICharacter.OnHit -= Refresh;
+      m_Hittable.OnHit -= Refresh;
    }
 
    private void Refresh(float _PercentLife)
